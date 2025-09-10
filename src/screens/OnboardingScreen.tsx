@@ -1,5 +1,5 @@
 // src/screens/OnboardingScreen.tsx
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,35 +11,106 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   ActivityIndicator,
+  Animated,
+  Platform,
+  StatusBar,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
 import { Asset } from "expo-asset";
 import { useAuth } from "../context/AuthContext";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 
 const { width, height } = Dimensions.get("window");
+const PARALLAX_FACTOR = 0.7;
+const INDICATOR_WIDTH = 30;
 
-// NOTE: require local assets so packager includes them.
-// Adjust path if your assets are elsewhere.
+// Enhanced slide data with gradient themes and icons
 const slides = [
   {
     id: "1",
-    title: "Welcome to Imperial Thread",
-    subtitle: "Discover premium clothing crafted for you.",
+    title: "Welcome to\nImperial Thread",
+    subtitle: "Where luxury meets innovation in every stitch",
     image: require("../../assets/img/products/product_2.jpeg"),
+    gradientColors: ["#1a1a2e", "#16213e", "#0f3460"],
+    accentColor: "#e94560",
+    icon: "diamond-stone" as const,
+    stats: { label: "Premium Brands", value: "500+" },
   },
   {
     id: "2",
-    title: "Modern Styles",
-    subtitle: "Stay trendy with our latest collections.",
+    title: "Cutting-Edge\nFashion",
+    subtitle: "AI-powered style recommendations just for you",
     image: require("../../assets/img/banners/banner_2.avif"),
+    gradientColors: ["#2d1b69", "#0e153a", "#22253b"],
+    accentColor: "#ff6b6b",
+    icon: "robot-outline" as const,
+    stats: { label: "Happy Customers", value: "100K+" },
   },
   {
     id: "3",
-    title: "Comfort Redefined",
-    subtitle: "Experience clothing that feels as good as it looks.",
+    title: "Sustainable\nLuxury",
+    subtitle: "Eco-conscious fashion without compromise",
     image: require("../../assets/img/products/product_1.jpeg"),
+    gradientColors: ["#0c2461", "#185a9d", "#4a69bd"],
+    accentColor: "#48dbfb",
+    icon: "leaf" as const,
+    stats: { label: "Carbon Neutral", value: "100%" },
   },
 ];
+
+// Animated particle component for background effect
+const AnimatedParticle = ({ delay }: { delay: number }) => {
+  const translateY = useRef(new Animated.Value(height)).current;
+  const translateX = useRef(new Animated.Value(Math.random() * width)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const animate = () => {
+      translateY.setValue(height);
+      translateX.setValue(Math.random() * width);
+      opacity.setValue(0);
+
+      Animated.parallel([
+        Animated.timing(translateY, {
+          toValue: -50,
+          duration: 15000 + Math.random() * 10000,
+          delay,
+          useNativeDriver: true,
+        }),
+        Animated.sequence([
+          Animated.timing(opacity, {
+            toValue: 0.6,
+            duration: 2000,
+            delay,
+            useNativeDriver: true,
+          }),
+          Animated.timing(opacity, {
+            toValue: 0,
+            duration: 2000,
+            delay: 11000,
+            useNativeDriver: true,
+          }),
+        ]),
+      ]).start(() => animate());
+    };
+
+    animate();
+  }, []);
+
+  return (
+    <Animated.View
+      style={[
+        styles.particle,
+        {
+          transform: [{ translateY }, { translateX }],
+          opacity,
+        },
+      ]}
+    />
+  );
+};
 
 export default function OnboardingScreen({ navigation }: any) {
   const flatListRef = useRef<FlatList | null>(null);
@@ -47,7 +118,16 @@ export default function OnboardingScreen({ navigation }: any) {
   const [assetsLoaded, setAssetsLoaded] = useState(false);
   const auth = useAuth();
 
-  // Preload bundled images for a smooth first render
+  // Animation values
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const buttonScale = useRef(new Animated.Value(1)).current;
+  const buttonRotate = useRef(new Animated.Value(0)).current;
+  const titleTranslateY = useRef(new Animated.Value(50)).current;
+  const titleOpacity = useRef(new Animated.Value(0)).current;
+  const statsScale = useRef(new Animated.Value(0)).current;
+  const glowOpacity = useRef(new Animated.Value(0.3)).current;
+
+  // Preload assets
   useEffect(() => {
     let mounted = true;
     const load = async () => {
@@ -57,7 +137,46 @@ export default function OnboardingScreen({ navigation }: any) {
       } catch (e) {
         console.warn("Asset preload failed", e);
       } finally {
-        if (mounted) setAssetsLoaded(true);
+        if (mounted) {
+          setAssetsLoaded(true);
+          // Animate entrance
+          Animated.parallel([
+            Animated.spring(titleTranslateY, {
+              toValue: 0,
+              tension: 20,
+              friction: 7,
+              useNativeDriver: true,
+            }),
+            Animated.timing(titleOpacity, {
+              toValue: 1,
+              duration: 800,
+              useNativeDriver: true,
+            }),
+            Animated.spring(statsScale, {
+              toValue: 1,
+              tension: 20,
+              friction: 7,
+              delay: 300,
+              useNativeDriver: true,
+            }),
+          ]).start();
+
+          // Glow pulse animation
+          Animated.loop(
+            Animated.sequence([
+              Animated.timing(glowOpacity, {
+                toValue: 0.8,
+                duration: 2000,
+                useNativeDriver: true,
+              }),
+              Animated.timing(glowOpacity, {
+                toValue: 0.3,
+                duration: 2000,
+                useNativeDriver: true,
+              }),
+            ])
+          ).start();
+        }
       }
     };
     load();
@@ -66,37 +185,120 @@ export default function OnboardingScreen({ navigation }: any) {
     };
   }, []);
 
+  // Button press animation
+  const animateButtonPress = useCallback(() => {
+    Animated.parallel([
+      Animated.sequence([
+        Animated.timing(buttonScale, {
+          toValue: 0.95,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.spring(buttonScale, {
+          toValue: 1,
+          friction: 3,
+          tension: 40,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.sequence([
+        Animated.timing(buttonRotate, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(buttonRotate, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start();
+  }, [buttonScale, buttonRotate]);
+
   const onNext = () => {
+    if (Platform.OS === "ios") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    animateButtonPress();
     const nextIndex = Math.min(currentIndex + 1, slides.length - 1);
     flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
     setCurrentIndex(nextIndex);
   };
 
-  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const x = e.nativeEvent.contentOffset.x;
-    const idx = Math.round(x / width);
-    setCurrentIndex(idx);
+  const onSkip = () => {
+    if (Platform.OS === "ios") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    const lastIndex = slides.length - 1;
+    flatListRef.current?.scrollToIndex({ index: lastIndex, animated: true });
+    setCurrentIndex(lastIndex);
   };
 
   const finishOnboarding = async () => {
-    // Persist that user has completed onboarding (AuthContext.finishOnboarding writes onboardingSeen)
+    if (Platform.OS === "ios") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+    animateButtonPress();
     await auth.finishOnboarding();
-    // navigate to Login — Login is registered in the same root navigator
     navigation.replace("Login");
   };
 
-  // While assets load show a centered spinner (prevents flicker)
+  const onScroll = Animated.event(
+    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+    {
+      useNativeDriver: false,
+      listener: (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+        const x = e.nativeEvent.contentOffset.x;
+        const idx = Math.round(x / width);
+        setCurrentIndex(idx);
+      },
+    }
+  );
+
   if (!assetsLoaded) {
     return (
       <View style={styles.loadingWrap}>
-        <ActivityIndicator size="large" color="#2E4374" />
+        <LinearGradient
+          colors={["#1a1a2e", "#0f3460"]}
+          style={StyleSheet.absoluteFillObject}
+        />
+        <View style={styles.loadingContent}>
+          <MaterialCommunityIcons
+            name="diamond-stone"
+            size={60}
+            color="#e94560"
+            style={styles.loadingIcon}
+          />
+          <ActivityIndicator size="large" color="#e94560" />
+          <Text style={styles.loadingText}>Imperial Thread</Text>
+        </View>
       </View>
     );
   }
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
-      <FlatList
+      <StatusBar barStyle="light-content" />
+      
+      {/* Animated particles background */}
+      <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
+        {[...Array(5)].map((_, i) => (
+          <AnimatedParticle key={i} delay={i * 2000} />
+        ))}
+      </View>
+
+      {/* Skip button */}
+      {currentIndex < slides.length - 1 && (
+        <Pressable style={styles.skipButton} onPress={onSkip}>
+          <BlurView intensity={80} tint="dark" style={styles.skipBlur}>
+            <Text style={styles.skipText}>Skip</Text>
+            <Ionicons name="arrow-forward" size={16} color="#fff" />
+          </BlurView>
+        </Pressable>
+      )}
+
+      <Animated.FlatList
         ref={(r) => (flatListRef.current = r)}
         data={slides}
         keyExtractor={(item) => item.id}
@@ -105,86 +307,391 @@ export default function OnboardingScreen({ navigation }: any) {
         showsHorizontalScrollIndicator={false}
         onScroll={onScroll}
         scrollEventThrottle={16}
-        renderItem={({ item, index }) => (
-          <View style={styles.slide}>
-            {/* use the local image via require */}
-            <Image source={item.image} style={styles.image} />
-            <LinearGradient
-              colors={["rgba(0,0,0,0.6)", "transparent"]}
-              style={StyleSheet.absoluteFillObject}
-            />
-            <View style={styles.textContainer}>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.subtitle}>{item.subtitle}</Text>
+        renderItem={({ item, index }) => {
+          const inputRange = [
+            (index - 1) * width,
+            index * width,
+            (index + 1) * width,
+          ];
 
-              {index < slides.length - 1 ? (
-                <Pressable
-                  style={styles.button}
-                  onPress={onNext}
-                  android_ripple={{ color: "rgba(255,255,255,0.12)" }}
+          const imageTranslateX = scrollX.interpolate({
+            inputRange,
+            outputRange: [-width * PARALLAX_FACTOR, 0, width * PARALLAX_FACTOR],
+          });
+
+          const imageScale = scrollX.interpolate({
+            inputRange,
+            outputRange: [1.3, 1, 1.3],
+          });
+
+          const contentOpacity = scrollX.interpolate({
+            inputRange,
+            outputRange: [0, 1, 0],
+          });
+
+          const contentTranslateY = scrollX.interpolate({
+            inputRange,
+            outputRange: [100, 0, -100],
+          });
+
+          return (
+            <View style={styles.slide}>
+              {/* Parallax Image */}
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFillObject,
+                  {
+                    transform: [
+                      { translateX: imageTranslateX },
+                      { scale: imageScale },
+                    ],
+                  },
+                ]}
+              >
+                <Image source={item.image} style={styles.image} />
+              </Animated.View>
+
+              {/* Gradient Overlay */}
+              <LinearGradient
+                colors={[...item.gradientColors, "transparent"]}
+                style={StyleSheet.absoluteFillObject}
+                start={{ x: 0, y: 1 }}
+                end={{ x: 0, y: 0 }}
+                locations={[0, 0.3, 0.6, 1]}
+              />
+
+              {/* Animated Glow Effect */}
+              <Animated.View
+                style={[
+                  styles.glowEffect,
+                  {
+                    backgroundColor: item.accentColor,
+                    opacity: glowOpacity,
+                  },
+                ]}
+              />
+
+              {/* Content Container */}
+              <Animated.View
+                style={[
+                  styles.textContainer,
+                  {
+                    opacity: contentOpacity,
+                    transform: [{ translateY: contentTranslateY }],
+                  },
+                ]}
+              >
+                {/* Icon with glassmorphism */}
+                <View style={styles.iconContainer}>
+                  <BlurView intensity={30} tint="light" style={styles.iconBlur}>
+                    <MaterialCommunityIcons
+                      name={item.icon}
+                      size={40}
+                      color={item.accentColor}
+                    />
+                  </BlurView>
+                </View>
+
+                {/* Title */}
+                <Animated.Text
+                  style={[
+                    styles.title,
+                    {
+                      transform: [{ translateY: titleTranslateY }],
+                      opacity: titleOpacity,
+                    },
+                  ]}
                 >
-                  <Text style={styles.buttonText}>Next</Text>
-                </Pressable>
-              ) : (
-                <Pressable
-                  style={styles.button}
-                  onPress={finishOnboarding}
-                  android_ripple={{ color: "rgba(255,255,255,0.12)" }}
+                  {item.title}
+                </Animated.Text>
+
+                {/* Subtitle */}
+                <Text style={styles.subtitle}>{item.subtitle}</Text>
+
+                {/* Stats Card */}
+                <Animated.View
+                  style={[
+                    styles.statsCard,
+                    {
+                      transform: [{ scale: statsScale }],
+                    },
+                  ]}
                 >
-                  <Text style={styles.buttonText}>Get Started</Text>
-                </Pressable>
-              )}
+                  <BlurView intensity={20} tint="dark" style={styles.statsBlur}>
+                    <Text style={styles.statsValue}>{item.stats.value}</Text>
+                    <Text style={styles.statsLabel}>{item.stats.label}</Text>
+                  </BlurView>
+                </Animated.View>
+
+                {/* CTA Button */}
+                {index < slides.length - 1 ? (
+                  <Pressable onPress={onNext}>
+                    <Animated.View
+                      style={[
+                        styles.button,
+                        {
+                          backgroundColor: item.accentColor,
+                          transform: [
+                            { scale: buttonScale },
+                            {
+                              rotate: buttonRotate.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: ["0deg", "360deg"],
+                              }),
+                            },
+                          ],
+                        },
+                      ]}
+                    >
+                      <LinearGradient
+                        colors={[item.accentColor, item.accentColor + "dd"]}
+                        style={styles.buttonGradient}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                      >
+                        <Text style={styles.buttonText}>Continue</Text>
+                        <Ionicons name="arrow-forward" size={20} color="#fff" />
+                      </LinearGradient>
+                    </Animated.View>
+                  </Pressable>
+                ) : (
+                  <Pressable onPress={finishOnboarding}>
+                    <Animated.View
+                      style={[
+                        styles.button,
+                        {
+                          backgroundColor: item.accentColor,
+                          transform: [
+                            { scale: buttonScale },
+                            {
+                              rotate: buttonRotate.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: ["0deg", "360deg"],
+                              }),
+                            },
+                          ],
+                        },
+                      ]}
+                    >
+                      <LinearGradient
+                        colors={[item.accentColor, item.accentColor + "dd"]}
+                        style={styles.buttonGradient}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                      >
+                        <Text style={styles.buttonText}>Start Shopping</Text>
+                        <Ionicons name="sparkles" size={20} color="#fff" />
+                      </LinearGradient>
+                    </Animated.View>
+                  </Pressable>
+                )}
+              </Animated.View>
             </View>
-          </View>
-        )}
+          );
+        }}
       />
 
-      {/* Page indicator */}
+      {/* Custom Page Indicator */}
       <View style={styles.indicatorWrap}>
-        {slides.map((s, i) => (
-          <View
-            key={s.id}
-            style={[styles.indicator, i === currentIndex ? styles.indicatorActive : undefined]}
-          />
-        ))}
+        {slides.map((s, i) => {
+          const inputRange = [(i - 1) * width, i * width, (i + 1) * width];
+          
+          const indicatorWidth = scrollX.interpolate({
+            inputRange,
+            outputRange: [8, INDICATOR_WIDTH, 8],
+            extrapolate: "clamp",
+          });
+
+          const indicatorOpacity = scrollX.interpolate({
+            inputRange,
+            outputRange: [0.3, 1, 0.3],
+            extrapolate: "clamp",
+          });
+
+          return (
+            <Animated.View
+              key={s.id}
+              style={[
+                styles.indicator,
+                {
+                  width: indicatorWidth,
+                  opacity: indicatorOpacity,
+                  backgroundColor: i === currentIndex ? s.accentColor : "#fff",
+                },
+              ]}
+            />
+          );
+        })}
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  loadingWrap: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#000" },
-  slide: { width, height, justifyContent: "flex-end" },
-  image: { ...StyleSheet.absoluteFillObject, width, height, resizeMode: "cover" },
-  textContainer: { padding: 24 },
-  title: { fontSize: 28, fontWeight: "800", color: "#fff", marginBottom: 10 },
-  subtitle: { fontSize: 16, color: "#eee", marginBottom: 20 },
-  button: {
-    backgroundColor: "#2E4374",
-    paddingVertical: 14,
-    borderRadius: 10,
+  loadingWrap: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 20,
+    backgroundColor: "#000",
   },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "700" },
+  loadingContent: {
+    alignItems: "center",
+  },
+  loadingIcon: {
+    marginBottom: 20,
+  },
+  loadingText: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "700",
+    marginTop: 20,
+    letterSpacing: 2,
+  },
+  slide: {
+    width,
+    height,
+    justifyContent: "flex-end",
+  },
+  image: {
+    ...StyleSheet.absoluteFillObject,
+    width: width * 1.3,
+    height,
+    resizeMode: "cover",
+  },
+  glowEffect: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: height * 0.3,
+    opacity: 0.3,
+    transform: [{ scaleY: 2 }],
+  },
+  textContainer: {
+    padding: 30,
+    paddingBottom: 50,
+  },
+  iconContainer: {
+    marginBottom: 20,
+  },
+  iconBlur: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
+  },
+  title: {
+    fontSize: 42,
+    fontWeight: "900",
+    color: "#fff",
+    marginBottom: 15,
+    letterSpacing: -1,
+    lineHeight: 48,
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 10,
+  },
+  subtitle: {
+    fontSize: 18,
+    color: "rgba(255,255,255,0.9)",
+    marginBottom: 30,
+    lineHeight: 24,
+    fontWeight: "400",
+    letterSpacing: 0.5,
+  },
+  statsCard: {
+    marginBottom: 30,
+  },
+  statsBlur: {
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 20,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+    alignSelf: "flex-start",
+  },
+  statsValue: {
+    fontSize: 28,
+    fontWeight: "800",
+    color: "#fff",
+    letterSpacing: -1,
+  },
+  statsLabel: {
+    fontSize: 14,
+    color: "rgba(255,255,255,0.7)",
+    marginTop: 2,
+    letterSpacing: 0.5,
+  },
+  button: {
+    borderRadius: 30,
+    overflow: "hidden",
+    elevation: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+  },
+  buttonGradient: {
+    paddingVertical: 18,
+    paddingHorizontal: 35,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "700",
+    letterSpacing: 0.5,
+  },
+  skipButton: {
+    position: "absolute",
+    top: Platform.OS === "ios" ? 60 : 40,
+    right: 20,
+    zIndex: 10,
+  },
+  skipBlur: {
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    overflow: "hidden",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
+  },
+  skipText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600",
+  },
   indicatorWrap: {
     position: "absolute",
-    bottom: 34,
+    bottom: Platform.OS === "ios" ? 40 : 30,
     left: 0,
     right: 0,
     flexDirection: "row",
     justifyContent: "center",
-  } as any,
-  indicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 8,
-    backgroundColor: "rgba(255,255,255,0.28)",
-    marginHorizontal: 4,
+    alignItems: "center",
+    gap: 8,
   },
-  indicatorActive: {
+  indicator: {
+    height: 6,
+    borderRadius: 3,
     backgroundColor: "#fff",
-    width: 18,
-    borderRadius: 9,
+  },
+  particle: {
+    position: "absolute",
+    width: 3,
+    height: 3,
+    backgroundColor: "rgba(255,255,255,0.3)",
+    borderRadius: 1.5,
   },
 });
