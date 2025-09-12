@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from "react";
-import { AuthContextShapeProps } from "../types";
+import { AuthContextShapeProps } from "../utils/types";
 
 export const AuthContext = createContext<AuthContextShapeProps>({
   loading: true,

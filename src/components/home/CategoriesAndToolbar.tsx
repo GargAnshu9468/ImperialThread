@@ -3,7 +3,7 @@ import { FlatList, View, StyleSheet, Pressable } from "react-native";
 import { Chip, Text } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import type { CategoriesAndToolbarProps } from "../../types";
+import type { CategoriesAndToolbarProps } from "../../utils/types";
 
 const CategoriesAndToolbar: React.FC<CategoriesAndToolbarProps> = ({
     categories,

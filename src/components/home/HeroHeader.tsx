@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Appbar, Searchbar, Text } from "react-native-paper";
-import type { HeroHeaderProps } from "../../types";
+import type { HeroHeaderProps } from "../../utils/types";
 
 const HeroHeader: React.FC<HeroHeaderProps> = ({ brand, query, onQuery, onMenu, right }) => {
     return (

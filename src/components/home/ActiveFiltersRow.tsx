@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { Chip, Text } from "react-native-paper";
 import { PRICE_BUCKETS } from "../../data/priceBuckets";
-import type { ActiveFiltersRowProps } from "../../types";
+import type { ActiveFiltersRowProps } from "../../utils/types";
 
 const ActiveFiltersRow: React.FC<ActiveFiltersRowProps> = ({
     category,

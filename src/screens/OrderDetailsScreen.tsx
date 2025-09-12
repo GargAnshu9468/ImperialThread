@@ -9,7 +9,7 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { useCart } from "../context/CartContext";
 import { Asset } from "expo-asset";
-import type { OrderStatus, OrderItem, Order } from "../types";
+import type { OrderStatus, OrderItem, Order } from "../utils/types";
 import { ORDER } from "../data/order";
 import { STATUS_STEPS } from "../data/statusSteps";
 import { getCurrentStepIndex, currency, buildInvoiceHTML } from "../utils/format";

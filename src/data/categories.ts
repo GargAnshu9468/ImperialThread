@@ -1,4 +1,4 @@
-import type { Category } from "../types";
+import type { Category } from "../utils/types";
 
 export const CATEGORIES: { label: Category; icon: string }[] = [
   { label: "All", icon: "apps" },

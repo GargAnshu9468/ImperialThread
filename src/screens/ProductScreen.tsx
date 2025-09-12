@@ -30,7 +30,7 @@ import VariantSwatch from "../components/VariantSwatch";
 import Dots from "../components/Dots";
 import { useCart } from "../context/CartContext";
 import CartIconBadge from "../components/CartIconBadge";
-import { ProductScreenParams, SavedAddress } from "../types";
+import { ProductScreenParams, SavedAddress } from "../utils/types";
 import { SavedAddresses } from "../data/savedAddresses";
 
 const { width } = Dimensions.get("window");

@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Pressable, Platform } from "react-native";
 import { MotiView } from "moti";
-import { VariantSwatchProps } from "../interfaces"
+import { VariantSwatchProps } from "../utils/interfaces"
 
 const VariantSwatch: React.FC<VariantSwatchProps> = ({ color, hex, selected = false, onPress }) => {
   return (

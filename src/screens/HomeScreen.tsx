@@ -16,7 +16,7 @@ import SortFilterSheet from "../components/home/SortFilterSheet";
 
 // Data & Types
 
-import type { Category, PriceKey } from "../types";
+import type { Category, PriceKey } from "../utils/types";
 import { PRODUCTS } from "../data/products";
 import { CATEGORIES } from "../data/categories";
 import { PRICE_BUCKETS } from "../data/priceBuckets";

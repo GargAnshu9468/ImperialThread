@@ -23,7 +23,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useCart } from "../context/CartContext";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Promo } from "../types";
+import { Promo } from "../utils/types";
 import { PROMOS } from "../data/promos";
 
 /**

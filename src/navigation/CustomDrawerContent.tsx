@@ -24,7 +24,7 @@ import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { useAuth } from "../context/AuthContext";
 import { Asset } from "expo-asset";
-import { CustomDrawerContentProps } from "../types";
+import { CustomDrawerContentProps } from "../utils/types";
 
 export default function CustomDrawerContent({
   navigation,

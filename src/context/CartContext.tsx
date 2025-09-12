@@ -1,6 +1,6 @@
 import React, { createContext, useReducer, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CartItem, CartState, CartAction, CartContextType, Product, ProductVariant } from '../types';
+import { CartItem, CartState, CartAction, CartContextType, Product, ProductVariant } from '../utils/types';
 
 // clamp to stock safely
 function clampQty(variant: ProductVariant, selectedSize: string | undefined, desired: number) {

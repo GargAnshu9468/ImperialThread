@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "react-native-paper";
 import { useCart } from "../context/CartContext";
-import type { CartIconBadgeProps } from "../types";
+import type { CartIconBadgeProps } from "../utils/types";
 
 export default function CartIconBadge({ color = "#fff", onPress }: CartIconBadgeProps) {
     const { items } = useCart();

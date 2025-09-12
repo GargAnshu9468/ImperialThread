@@ -1,4 +1,4 @@
-import { SavedAddress } from "../types";
+import { SavedAddress } from "../utils/types";
 
 export const SavedAddresses: SavedAddress[] = [
     { id: "a1", name: "Home", line: "MG Road, Bengaluru", pin: "560001" },

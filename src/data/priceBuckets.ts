@@ -1,4 +1,4 @@
-import type { PriceKey } from "../types";
+import type { PriceKey } from "../utils/types";
 
 export const PRICE_BUCKETS: { key: PriceKey; label: string; isIn: (price: number) => boolean }[] = [
     { key: "p0", label: "Under ₹499", isIn: (p) => p < 499 },

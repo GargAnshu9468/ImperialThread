@@ -1,4 +1,4 @@
-import type { OrderStatus } from "../types";
+import type { OrderStatus } from "../utils/types";
 
 export const FILTERS: ("All" | OrderStatus)[] = [
   "All",

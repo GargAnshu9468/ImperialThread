@@ -16,7 +16,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { PRODUCTS } from "../data/products";
 import { CATEGORIES } from "../data/categories";
 import { PRICE_BUCKETS } from "../data/priceBuckets";
-import type { Category, Product, PriceKey } from "../types";
+import type { Category, Product, PriceKey } from "../utils/types";
 
 import ProductCard from "../components/ProductCard";
 import CartIconBadge from "../components/CartIconBadge";

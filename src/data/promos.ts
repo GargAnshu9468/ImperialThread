@@ -1,4 +1,4 @@
-import { Promo } from "../types";
+import { Promo } from "../utils/types";
 
 export const PROMOS: Promo[] = [
   {

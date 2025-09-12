@@ -23,7 +23,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { MotiView } from "moti";
 import { useCart } from "../context/CartContext";
 import { Asset } from "expo-asset";
-import type { OrderStatus, OrderItem, Order } from "../types";
+import type { OrderStatus, OrderItem, Order } from "../utils/types";
 import { ORDERS } from "../data/orders";
 import { FILTERS } from "../data/orderFilters";
 import StatusBadge from "../components/StatusBadge";

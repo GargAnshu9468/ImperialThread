@@ -1,5 +1,5 @@
 import React from "react";
-import type { SortFilterSheetProps } from "../../types";
+import type { SortFilterSheetProps } from "../../utils/types";
 import { PRICE_BUCKETS } from "../../data/priceBuckets";
 import { View, StyleSheet, Pressable, Animated } from "react-native";
 import { Button, Checkbox, Divider, RadioButton, Text, Portal } from "react-native-paper";

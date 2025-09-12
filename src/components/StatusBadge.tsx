@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import type { OrderStatus } from "../types";
+import type { OrderStatus } from "../utils/types";
 import { Text } from "react-native-paper";
 import React from "react";
 

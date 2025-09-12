@@ -1,5 +1,5 @@
 import { STATUS_STEPS } from "../data/statusSteps";
-import type { OrderStatus, Order } from "../types";
+import type { OrderStatus, Order } from "./types";
 
 export const formatINR = (value: number) => `₹${value.toFixed(0)}`;
 
