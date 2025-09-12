@@ -1,16 +1,7 @@
-// src/context/AuthContext.tsx
 import React, { createContext, useContext } from "react";
+import { AuthContextShapeProps } from "../types";
 
-export type AuthContextShape = {
-  loading: boolean;
-  isFirstLaunch: boolean | null;
-  isLoggedIn: boolean;
-  login: () => Promise<void>;
-  logout: () => Promise<void>;
-  finishOnboarding: () => Promise<void>;
-};
-
-export const AuthContext = createContext<AuthContextShape>({
+export const AuthContext = createContext<AuthContextShapeProps>({
   loading: true,
   isFirstLaunch: null,
   isLoggedIn: false,
@@ -19,8 +10,4 @@ export const AuthContext = createContext<AuthContextShape>({
   finishOnboarding: async () => {},
 });
 
-/**
- * Small hook wrapper for ease of use:
- * import { useAuth } from 'src/context/AuthContext'
- */
 export const useAuth = () => useContext(AuthContext);

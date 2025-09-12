@@ -26,11 +26,12 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import ImageView from "react-native-image-viewing";
-
 import VariantSwatch from "../components/VariantSwatch";
 import Dots from "../components/Dots";
 import { useCart } from "../context/CartContext";
 import CartIconBadge from "../components/CartIconBadge";
+import { ProductScreenParams, SavedAddress } from "../types";
+import { SavedAddresses } from "../data/savedAddresses";
 
 const { width } = Dimensions.get("window");
 const HERO_IMG = width; // square hero
@@ -69,18 +70,6 @@ function evaluatePin(pin: string, amount: number) {
     };
 }
 
-type ProductScreenParams = {
-    product: any;
-    similarProducts?: any[];
-};
-
-type SavedAddress = {
-    id: string;
-    name: string;
-    line: string;
-    pin: string;
-};
-
 const ProductScreen: React.FC<any> = ({ route, navigation }) => {
     const { product, similarProducts = [] } = route.params as ProductScreenParams;
     const theme = useTheme();
@@ -98,10 +87,7 @@ const ProductScreen: React.FC<any> = ({ route, navigation }) => {
     const [pincode, setPincode] = useState<string>("560001");
     const pinEval = evaluatePin(pincode, product.price);
 
-    const [addresses, setAddresses] = useState<SavedAddress[]>([
-        { id: "a1", name: "Home", line: "MG Road, Bengaluru", pin: "560001" },
-        { id: "a2", name: "Office", line: "Connaught Place, New Delhi", pin: "110001" },
-    ]);
+    const [addresses, setAddresses] = useState<SavedAddress[]>(SavedAddresses);
     const [newPin, setNewPin] = useState("");
 
     // Animations

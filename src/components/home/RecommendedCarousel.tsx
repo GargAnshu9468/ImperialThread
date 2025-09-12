@@ -3,18 +3,11 @@ import { View, FlatList, Dimensions, StyleSheet, Pressable } from "react-native"
 import { Text } from "react-native-paper";
 import ProductCard from "../ProductCard";
 import type { Product } from "../../types";
+import { RecommendedCarouselProps } from "../../interfaces";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.55;
 const SPACING = 16;
-
-interface RecommendedCarouselProps {
-    title: string;
-    products: Product[];
-    onPressSeeAll: () => void;
-    onPressProduct: (product: Product) => void;
-    accentColor?: string;
-}
 
 const RecommendedCarousel: React.FC<RecommendedCarouselProps> = ({
     title,

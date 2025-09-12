@@ -1,0 +1,32 @@
+export const SLIDES = [
+  {
+    id: "1",
+    title: "Welcome to\nImperial Thread",
+    subtitle: "Where luxury meets innovation in every stitch",
+    image: require("../../assets/img/products/product_2.jpeg"),
+    gradientColors: ["#1a1a2e", "#16213e", "#0f3460"],
+    accentColor: "#e94560",
+    icon: "diamond-stone" as const,
+    stats: { label: "Premium Brands", value: "500+" },
+  },
+  {
+    id: "2",
+    title: "Cutting-Edge\nFashion",
+    subtitle: "AI-powered style recommendations just for you",
+    image: require("../../assets/img/banners/banner_2.avif"),
+    gradientColors: ["#2d1b69", "#0e153a", "#22253b"],
+    accentColor: "#ff6b6b",
+    icon: "robot-outline" as const,
+    stats: { label: "Happy Customers", value: "100K+" },
+  },
+  {
+    id: "3",
+    title: "Sustainable\nLuxury",
+    subtitle: "Eco-conscious fashion without compromise",
+    image: require("../../assets/img/products/product_1.jpeg"),
+    gradientColors: ["#0c2461", "#185a9d", "#4a69bd"],
+    accentColor: "#48dbfb",
+    icon: "leaf" as const,
+    stats: { label: "Carbon Neutral", value: "100%" },
+  },
+];

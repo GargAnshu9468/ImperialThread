@@ -1,19 +1,10 @@
 import React from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { Chip, Text } from "react-native-paper";
-import { PRICE_BUCKETS, PriceKey } from "./SortFilterSheet";
-import type { Category } from "../../types";
+import { PRICE_BUCKETS } from "../../data/priceBuckets";
+import type { ActiveFiltersRowProps } from "../../types";
 
-type Props = {
-    category: Category;
-    selectedPriceKeys: PriceKey[];
-    selectedSizes: string[];
-    onlyInStock: boolean;
-    onClearChip: (type: "category" | "price" | "size" | "stock", value?: any) => void;
-    onClearAll: () => void;
-};
-
-const ActiveFiltersRow: React.FC<Props> = ({
+const ActiveFiltersRow: React.FC<ActiveFiltersRowProps> = ({
     category,
     selectedPriceKeys,
     selectedSizes,

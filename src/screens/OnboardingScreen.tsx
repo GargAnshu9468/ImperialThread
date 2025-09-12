@@ -21,44 +21,11 @@ import { Asset } from "expo-asset";
 import { useAuth } from "../context/AuthContext";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { SLIDES } from "../data/slides";
 
 const { width, height } = Dimensions.get("window");
 const PARALLAX_FACTOR = 0.7;
 const INDICATOR_WIDTH = 30;
-
-// Enhanced slide data with gradient themes and icons
-const slides = [
-  {
-    id: "1",
-    title: "Welcome to\nImperial Thread",
-    subtitle: "Where luxury meets innovation in every stitch",
-    image: require("../../assets/img/products/product_2.jpeg"),
-    gradientColors: ["#1a1a2e", "#16213e", "#0f3460"],
-    accentColor: "#e94560",
-    icon: "diamond-stone" as const,
-    stats: { label: "Premium Brands", value: "500+" },
-  },
-  {
-    id: "2",
-    title: "Cutting-Edge\nFashion",
-    subtitle: "AI-powered style recommendations just for you",
-    image: require("../../assets/img/banners/banner_2.avif"),
-    gradientColors: ["#2d1b69", "#0e153a", "#22253b"],
-    accentColor: "#ff6b6b",
-    icon: "robot-outline" as const,
-    stats: { label: "Happy Customers", value: "100K+" },
-  },
-  {
-    id: "3",
-    title: "Sustainable\nLuxury",
-    subtitle: "Eco-conscious fashion without compromise",
-    image: require("../../assets/img/products/product_1.jpeg"),
-    gradientColors: ["#0c2461", "#185a9d", "#4a69bd"],
-    accentColor: "#48dbfb",
-    icon: "leaf" as const,
-    stats: { label: "Carbon Neutral", value: "100%" },
-  },
-];
 
 // Animated particle component for background effect
 const AnimatedParticle = ({ delay }: { delay: number }) => {
@@ -132,7 +99,7 @@ export default function OnboardingScreen({ navigation }: any) {
     let mounted = true;
     const load = async () => {
       try {
-        const assetModules = slides.map((s) => s.image);
+        const assetModules = SLIDES.map((s) => s.image);
         await Asset.loadAsync(assetModules);
       } catch (e) {
         console.warn("Asset preload failed", e);
@@ -221,7 +188,7 @@ export default function OnboardingScreen({ navigation }: any) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     animateButtonPress();
-    const nextIndex = Math.min(currentIndex + 1, slides.length - 1);
+    const nextIndex = Math.min(currentIndex + 1, SLIDES.length - 1);
     flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
     setCurrentIndex(nextIndex);
   };
@@ -230,7 +197,7 @@ export default function OnboardingScreen({ navigation }: any) {
     if (Platform.OS === "ios") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
-    const lastIndex = slides.length - 1;
+    const lastIndex = SLIDES.length - 1;
     flatListRef.current?.scrollToIndex({ index: lastIndex, animated: true });
     setCurrentIndex(lastIndex);
   };
@@ -289,7 +256,7 @@ export default function OnboardingScreen({ navigation }: any) {
       </View>
 
       {/* Skip button */}
-      {currentIndex < slides.length - 1 && (
+      {currentIndex < SLIDES.length - 1 && (
         <Pressable style={styles.skipButton} onPress={onSkip}>
           <BlurView intensity={80} tint="dark" style={styles.skipBlur}>
             <Text style={styles.skipText}>Skip</Text>
@@ -300,7 +267,7 @@ export default function OnboardingScreen({ navigation }: any) {
 
       <Animated.FlatList
         ref={(r) => (flatListRef.current = r)}
-        data={slides}
+        data={SLIDES}
         keyExtractor={(item) => item.id}
         horizontal
         pagingEnabled
@@ -424,7 +391,7 @@ export default function OnboardingScreen({ navigation }: any) {
                 </Animated.View>
 
                 {/* CTA Button */}
-                {index < slides.length - 1 ? (
+                {index < SLIDES.length - 1 ? (
                   <Pressable onPress={onNext}>
                     <Animated.View
                       style={[
@@ -493,7 +460,7 @@ export default function OnboardingScreen({ navigation }: any) {
 
       {/* Custom Page Indicator */}
       <View style={styles.indicatorWrap}>
-        {slides.map((s, i) => {
+        {SLIDES.map((s, i) => {
           const inputRange = [(i - 1) * width, i * width, (i + 1) * width];
           
           const indicatorWidth = scrollX.interpolate({

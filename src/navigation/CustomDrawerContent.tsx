@@ -17,27 +17,20 @@ import {
   Badge,
   TouchableRipple,
 } from "react-native-paper";
-import {
-  DrawerContentScrollView,
-  DrawerContentComponentProps,
-} from "@react-navigation/drawer";
+import { DrawerContentScrollView } from "@react-navigation/drawer";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { useAuth } from "../context/AuthContext";
 import { Asset } from "expo-asset";
-
-type Props = DrawerContentComponentProps & {
-  onToggleTheme?: () => void;
-  isDark?: boolean;
-};
+import { CustomDrawerContentProps } from "../types";
 
 export default function CustomDrawerContent({
   navigation,
   onToggleTheme,
   isDark,
-}: Props) {
+}: CustomDrawerContentProps) {
   const theme = useTheme();
   const { items } = useCart();
   const { wishlist } = useWishlist();

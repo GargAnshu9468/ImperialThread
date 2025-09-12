@@ -14,13 +14,15 @@ import {
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { PRODUCTS } from "../data/products";
-import type { Category, Product } from "../types";
+import { CATEGORIES } from "../data/categories";
+import { PRICE_BUCKETS } from "../data/priceBuckets";
+import type { Category, Product, PriceKey } from "../types";
 
 import ProductCard from "../components/ProductCard";
 import CartIconBadge from "../components/CartIconBadge";
 import CategoriesAndToolbar from "../components/home/CategoriesAndToolbar";
 import ActiveFiltersRow from "../components/home/ActiveFiltersRow";
-import SortFilterSheet, { PriceKey, PRICE_BUCKETS } from "../components/home/SortFilterSheet";
+import SortFilterSheet from "../components/home/SortFilterSheet";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - 24 - 12) / 2;
@@ -120,13 +122,7 @@ const ProductsScreen: React.FC<any> = ({ route, navigation }) => {
 
       {/* Toolbar (categories + sort/filter) */}
       <CategoriesAndToolbar
-        categories={[
-          { label: "All", icon: "apps" },
-          { label: "Shirts", icon: "tshirt-crew" },
-          { label: "T-Shirts", icon: "tshirt-v" },
-          { label: "Polos", icon: "tshirt-crew-outline" },
-          { label: "Casual", icon: "hanger" },
-        ]}
+        categories={CATEGORIES}
         category={category}
         setCategory={(c) => {
           setCategory(c);

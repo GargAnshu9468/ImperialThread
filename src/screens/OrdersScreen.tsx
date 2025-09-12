@@ -23,87 +23,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { MotiView } from "moti";
 import { useCart } from "../context/CartContext";
 import { Asset } from "expo-asset";
-
-// ---- Types ----
-type OrderStatus = "Processing" | "Shipped" | "Delivered" | "Cancelled";
-type OrderItem = {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image?: any;
-};
-type Order = {
-  id: string;
-  date: string;
-  status: OrderStatus;
-  total: number;
-  items: OrderItem[];
-};
-
-// ---- Demo data ----
-const DEMO_ORDERS: Order[] = [
-  {
-    id: "IT-9A2F7C",
-    date: "2025-08-24",
-    status: "Delivered",
-    total: 2499,
-    items: [
-      {
-        id: "p1",
-        name: "Oxford Shirt – Navy",
-        price: 1499,
-        quantity: 1,
-        image: require("../../assets/img/products/product_2.jpeg"),
-      },
-      {
-        id: "p2",
-        name: "Polo Tee – White",
-        price: 999,
-        quantity: 1,
-        image: require("../../assets/img/banners/banner_2.avif"),
-      },
-    ],
-  },
-  {
-    id: "IT-5QW12B",
-    date: "2025-08-22",
-    status: "Shipped",
-    total: 1799,
-    items: [
-      {
-        id: "p3",
-        name: "Casual Linen Shirt – Sand",
-        price: 1799,
-        quantity: 1,
-        image: require("../../assets/img/products/product_1.jpeg"),
-      },
-    ],
-  },
-  {
-    id: "IT-3KLM90",
-    date: "2025-08-20",
-    status: "Processing",
-    total: 1299,
-    items: [
-      {
-        id: "p4",
-        name: "Essential Cotton Tee – Black",
-        price: 1299,
-        quantity: 1,
-        image: require("../../assets/img/products/product_2.jpeg"),
-      },
-    ],
-  },
-];
-
-const FILTERS: ("All" | OrderStatus)[] = [
-  "All",
-  "Processing",
-  "Shipped",
-  "Delivered",
-  "Cancelled",
-];
+import type { OrderStatus, OrderItem, Order } from "../types";
+import { ORDERS } from "../data/orders";
+import { FILTERS } from "../data/orderFilters";
+import StatusBadge from "../components/StatusBadge";
 
 const OrdersScreen: React.FC<any> = ({ navigation }) => {
   const theme = useTheme();
@@ -113,7 +36,7 @@ const OrdersScreen: React.FC<any> = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [assetsLoaded, setAssetsLoaded] = useState(false);
 
-  const [orders, setOrders] = useState<Order[]>(DEMO_ORDERS);
+  const [orders, setOrders] = useState<Order[]>(ORDERS);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -132,29 +55,13 @@ const OrdersScreen: React.FC<any> = ({ navigation }) => {
     });
   }, [orders, query, status]);
 
-  const StatusBadge = ({ s }: { s: OrderStatus }) => {
-    const map: Record<OrderStatus, { bg: string; fg: string; icon: any }> = {
-      Processing: { bg: "#FFF4E5", fg: "#C76A00", icon: "time-outline" },
-      Shipped: { bg: "#E9F5FF", fg: "#1273EB", icon: "cube-outline" },
-      Delivered: { bg: "#EAF8EF", fg: "#228B22", icon: "checkmark-done-outline" },
-      Cancelled: { bg: "#FDECEE", fg: "#D7263D", icon: "close-circle-outline" },
-    };
-    const c = map[s];
-    return (
-      <View style={[styles.badge, { backgroundColor: c.bg }]}>
-        <Ionicons name={c.icon} size={14} color={c.fg} />
-        <Text style={[styles.badgeText, { color: c.fg }]}>{s}</Text>
-      </View>
-    );
-  };
-
   // Preload bundled images for a smooth first render
   useEffect(() => {
     let mounted = true;
     const load = async () => {
       try {
         // flatten arrays and only keep numeric module ids (local require results)
-        const assetModules = DEMO_ORDERS.flatMap((order) => order.items.map((item) => item.image)).filter(Boolean);
+        const assetModules = ORDERS.flatMap((order) => order.items.map((item) => item.image)).filter(Boolean);
         const moduleIds = assetModules.filter((m) => typeof m === "number") as any[];
         if (moduleIds.length > 0) {
           await Asset.loadAsync(moduleIds);
@@ -434,16 +341,6 @@ const styles = StyleSheet.create({
 
   orderId: { fontWeight: "800", fontSize: 15, color: "#1b1b1b" },
   dateText: { marginTop: 2, color: "#666", fontSize: 12.5 },
-
-  badge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 999,
-    gap: 6,
-  },
-  badgeText: { fontWeight: "700", fontSize: 12 },
 
   thumbRow: { flexDirection: "row", marginTop: 12, gap: 8 },
   thumbWrap: { position: "relative" },

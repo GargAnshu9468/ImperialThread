@@ -5,7 +5,6 @@ import {
   Image,
   StyleSheet,
   Pressable,
-  SafeAreaView,
 } from "react-native";
 import {
   Appbar,
@@ -22,6 +21,7 @@ import { Swipeable } from "react-native-gesture-handler";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import CartIconBadge from "../components/CartIconBadge";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const FREE_SHIPPING_THRESHOLD = 1499;
 const SHIPPING_FEE = 99;
@@ -178,7 +178,7 @@ const CartScreen: React.FC<any> = ({ navigation }) => {
             style={styles.imageWrap}
           >
             {img ? (
-              <Image source={{ uri: img }} style={styles.image} />
+              <Image source={ img } style={styles.image} />
             ) : (
               <View style={[styles.image, { backgroundColor: "#f2f2f2" }]} />
             )}

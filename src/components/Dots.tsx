@@ -1,7 +1,6 @@
 import { View } from 'react-native';
 import React from 'react';
 
-
 const Dot = ({ active }: { active: boolean }) => (
     <View
         style={{
@@ -14,7 +13,6 @@ const Dot = ({ active }: { active: boolean }) => (
         }}
     />
 );
-
 
 export default function Dots({ total, index }: { total: number; index: number }) {
     return (

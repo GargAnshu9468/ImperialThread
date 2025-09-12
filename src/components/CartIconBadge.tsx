@@ -3,11 +3,11 @@ import { View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "react-native-paper";
 import { useCart } from "../context/CartContext";
+import type { CartIconBadgeProps } from "../types";
 
-type Props = { color?: string; onPress?: () => void };
-
-export default function CartIconBadge({ color = "#fff", onPress }: Props) {
+export default function CartIconBadge({ color = "#fff", onPress }: CartIconBadgeProps) {
     const { items } = useCart();
+
     return (
         <View style={{ marginRight: 8 }}>
             <Ionicons name="cart-outline" size={22} color={color} onPress={onPress} />

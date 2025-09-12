@@ -3,18 +3,9 @@ import { FlatList, View, StyleSheet, Pressable } from "react-native";
 import { Chip, Text } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import type { Category } from "../../types";
+import type { CategoriesAndToolbarProps } from "../../types";
 
-type Props = {
-    categories: { label: Category; icon: string }[];
-    category: Category;
-    setCategory: (c: Category) => void;
-    onSort: () => void;
-    onFilter: () => void;
-    gradient: string[];
-};
-
-const CategoriesAndToolbar: React.FC<Props> = ({
+const CategoriesAndToolbar: React.FC<CategoriesAndToolbarProps> = ({
     categories,
     category,
     setCategory,

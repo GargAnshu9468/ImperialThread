@@ -4,7 +4,6 @@ import {
   View,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   Pressable,
 } from "react-native";
 import {
@@ -23,6 +22,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCart } from "../context/CartContext";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Promo } from "../types";
+import { PROMOS } from "../data/promos";
 
 /**
  * 🔧 CONFIG: Swap these to match your region/business rules
@@ -37,33 +39,6 @@ const PRICING_CONFIG = {
     // "DL": 15, // Delhi additional ₹15
   },
 } as const;
-
-type Promo = {
-  code: string;
-  label: string;
-  // return the discount amount for a given subtotal (in ₹)
-  compute: (subtotal: number) => number;
-};
-
-// 🎟️ Define all your promo codes here
-const PROMOS: Promo[] = [
-  {
-    code: "IMPERIAL10",
-    label: "10% off",
-    compute: (subtotal) => Math.round(subtotal * 0.1),
-  },
-  {
-    code: "FREESHIP",
-    label: "Free Shipping",
-    compute: () => 0, // discount applies by waiving shipping below
-  },
-  // Tiered example:
-  {
-    code: "SAVE1500",
-    label: "₹200 off orders ₹1500+",
-    compute: (subtotal) => (subtotal >= 1500 ? 200 : 0),
-  },
-];
 
 /** Compute shipping (can use pincode/region if desired) */
 const computeShipping = (subtotal: number, pin: string | undefined) => {

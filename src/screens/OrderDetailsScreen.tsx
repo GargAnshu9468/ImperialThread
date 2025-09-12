@@ -9,155 +9,10 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { useCart } from "../context/CartContext";
 import { Asset } from "expo-asset";
-
-type OrderStatus = "Processing" | "Shipped" | "Out for delivery" | "Delivered" | "Cancelled";
-type OrderItem = { id: string; name: string; price: number; quantity: number; image?: any };
-type Order = {
-  id: string;
-  date: string;
-  status: OrderStatus;
-  trackingId?: string;
-  courier?: string;
-  eta?: string;
-  subtotal?: number;
-  shipping?: number;
-  tax?: number;
-  total: number;
-  address?: { name?: string; line1?: string; line2?: string; city?: string; zip?: string; phone?: string };
-  items: OrderItem[];
-};
-
-const STATUS_STEPS: OrderStatus[] = ["Processing", "Shipped", "Out for delivery", "Delivered"];
-
-const DEMO_ORDERS: Order[] = [
-  {
-    id: "IT-9A2F7C",
-    date: "2025-08-24",
-    status: "Delivered",
-    trackingId: "IMP123456789",
-    courier: "BlueDart",
-    eta: "Aug 26, 2025",
-    subtotal: 2499,
-    shipping: 0,
-    tax: 0,
-    total: 2499,
-    address: {
-      name: "Arjun Kapoor",
-      line1: "221B, Residency Road",
-      city: "Bengaluru",
-      zip: "560025",
-      phone: "+91-98XXXXXX01",
-    },
-    items: [
-      {
-        id: "p1",
-        name: "Oxford Shirt – Navy",
-        price: 1499,
-        quantity: 1,
-        image: require("../../assets/img/products/product_2.jpeg"),
-      },
-      {
-        id: "p2",
-        name: "Polo Tee – White",
-        price: 999,
-        quantity: 1,
-        image: require("../../assets/img/banners/banner_2.avif"),
-      },
-    ],
-  },
-];
-
-function getCurrentStepIndex(status: OrderStatus) {
-  const i = STATUS_STEPS.indexOf(status);
-  return i >= 0 ? i : 0;
-}
-const currency = (n?: number) => `₹${Math.round(n ?? 0).toLocaleString("en-IN")}`;
-
-function buildInvoiceHTML(order: Order) {
-  const rows = order.items
-    .map(
-      (it) => `
-      <tr>
-        <td style="padding:8px 12px;border-bottom:1px solid #eee;">${it.name}</td>
-        <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:center;">${it.quantity}</td>
-        <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">₹${it.price}</td>
-        <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;">₹${it.price * it.quantity}</td>
-      </tr>`
-    )
-    .join("");
-
-  const subtotal = order.subtotal ?? order.items.reduce((s, i) => s + i.price * i.quantity, 0);
-  const shipping = order.shipping ?? 0;
-  const tax = order.tax ?? 0;
-  const total = order.total ?? subtotal + shipping + tax;
-
-  return `... long HTML ...`.replace("... long HTML ...", `
-  <html>
-    <head>
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <style>
-        body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; color:#111; }
-        .brand { font-size: 20px; font-weight: 800; letter-spacing:.3px; color:#1E2749 }
-        .muted { color:#666 }
-        .card { border:1px solid #eee; border-radius:10px; padding:16px }
-        .row { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
-        .mt16 { margin-top:16px }
-        .mt8 { margin-top:8px }
-        table { border-collapse:collapse; width:100%; margin-top:10px }
-        th { text-align:left; font-size:12px; color:#666; padding:8px 12px; border-bottom:1px solid #eee; }
-      </style>
-    </head>
-    <body>
-      <div class="row">
-        <div class="brand">Imperial Thread</div>
-        <div style="text-align:right">
-          <div class="muted">Invoice</div>
-          <div><b>${order.id}</b></div>
-          <div class="muted">${new Date(order.date).toDateString()}</div>
-        </div>
-      </div>
-
-      <div class="row mt16">
-        <div class="card" style="flex:1">
-          <div style="font-weight:700">Billed To</div>
-          <div class="mt8">${order.address?.name ?? "-"}</div>
-          <div>${order.address?.line1 ?? ""}</div>
-          <div>${order.address?.city ?? ""} ${order.address?.zip ?? ""}</div>
-          <div>${order.address?.phone ?? ""}</div>
-        </div>
-        <div class="card" style="flex:1">
-          <div style="font-weight:700">Shipment</div>
-          <div class="mt8">Status: ${order.status}</div>
-          <div>Courier: ${order.courier ?? "-"}</div>
-          <div>Tracking: ${order.trackingId ?? "-"}</div>
-          <div>ETA: ${order.eta ?? "-"}</div>
-        </div>
-      </div>
-
-      <div class="card mt16">
-        <table>
-          <thead>
-            <tr><th>Item</th><th style="text-align:center;">Qty</th><th style="text-align:right;">Price</th><th style="text-align:right;">Amount</th></tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
-
-        <div style="display:flex; justify-content:flex-end; margin-top:12px">
-          <div style="min-width:240px;">
-            <div class="row"><div class="muted">Subtotal</div><div>${currency(subtotal)}</div></div>
-            <div class="row"><div class="muted">Shipping</div><div>${currency(shipping)}</div></div>
-            <div class="row"><div class="muted">Tax</div><div>${currency(tax)}</div></div>
-            <div class="row" style="font-weight:800; font-size:16px; margin-top:8px;"><div>Total</div><div>${currency(total)}</div></div>
-          </div>
-        </div>
-      </div>
-
-      <div style="text-align:center; color:#666; margin-top:18px">
-        Thank you for shopping with Imperial Thread
-      </div>
-    </body>
-  </html>`);
-}
+import type { OrderStatus, OrderItem, Order } from "../types";
+import { ORDER } from "../data/order";
+import { STATUS_STEPS } from "../data/statusSteps";
+import { getCurrentStepIndex, currency, buildInvoiceHTML } from "../utils/format";
 
 const OrderDetailsScreen: React.FC<any> = ({ route, navigation }) => {
   // --- Hooks: always call hooks first (no conditional hooks) ---
@@ -170,7 +25,7 @@ const OrderDetailsScreen: React.FC<any> = ({ route, navigation }) => {
   // compute the resolved order (useMemo is a hook — keep up here)
   const order: Order | undefined = useMemo(() => {
     if (passedOrder) return passedOrder;
-    if (orderId) return DEMO_ORDERS.find((o) => o.id === orderId);
+    if (orderId) return ORDER.find((o) => o.id === orderId);
     return undefined;
   }, [passedOrder, orderId]);
 
@@ -182,7 +37,7 @@ const OrderDetailsScreen: React.FC<any> = ({ route, navigation }) => {
     const load = async () => {
       try {
         // collect all local images from demo orders
-        const assetModules = DEMO_ORDERS.flatMap((o) => o.items.map((it) => it.image)).filter(Boolean);
+        const assetModules = ORDER.flatMap((o) => o.items.map((it) => it.image)).filter(Boolean);
         // only call loadAsync if we have local module ids (numbers)
         const moduleIds = assetModules.filter((m) => typeof m === "number") as any[];
         if (moduleIds.length > 0) {

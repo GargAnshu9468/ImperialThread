@@ -12,27 +12,19 @@ import BannerCarousel from "../components/home/BannerCarousel";
 import ActiveFiltersRow from "../components/home/ActiveFiltersRow";
 import RecommendedCarousel from "../components/home/RecommendedCarousel";
 import CategoriesAndToolbar from "../components/home/CategoriesAndToolbar";
-import SortFilterSheet, { PriceKey, PRICE_BUCKETS } from "../components/home/SortFilterSheet";
+import SortFilterSheet from "../components/home/SortFilterSheet";
 
 // Data & Types
 
-import type { Category } from "../types";
+import type { Category, PriceKey } from "../types";
 import { PRODUCTS } from "../data/products";
+import { CATEGORIES } from "../data/categories";
+import { PRICE_BUCKETS } from "../data/priceBuckets";
 
 // Brand theme
 
 const BRAND_ACCENT = "#2E4374";
 const BRAND_GRADIENT = ["#2E4374", "#1E2749"];
-
-// Categories
-
-export const CATEGORIES: { label: Category; icon: string }[] = [
-  { label: "All", icon: "apps" },
-  { label: "Shirts", icon: "tshirt-crew" },
-  { label: "T-Shirts", icon: "tshirt-v" },
-  { label: "Polos", icon: "tshirt-crew-outline" },
-  { label: "Casual", icon: "hanger" },
-];
 
 const HomeScreen: React.FC<any> = ({ navigation }) => {
 

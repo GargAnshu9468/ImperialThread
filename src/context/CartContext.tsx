@@ -1,6 +1,6 @@
 import React, { createContext, useReducer, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CartItem, Product, ProductVariant } from '../types';
+import { CartItem, CartState, CartAction, CartContextType, Product, ProductVariant } from '../types';
 
 // clamp to stock safely
 function clampQty(variant: ProductVariant, selectedSize: string | undefined, desired: number) {
@@ -9,21 +9,13 @@ function clampQty(variant: ProductVariant, selectedSize: string | undefined, des
   return Math.min(Math.max(1, desired), max);
 }
 
-type State = { items: CartItem[] };
-const initialState: State = { items: [] };
-
-type Action =
-  | { type: 'HYDRATE'; payload: CartItem[] }
-  | { type: 'ADD'; payload: CartItem }
-  | { type: 'REMOVE'; payload: { id: string; selectedSize?: string; variantIndex: number } }
-  | { type: 'UPDATE_QTY'; payload: { id: string; selectedSize?: string; variantIndex: number; qty: number } }
-  | { type: 'CLEAR' };
+const initialState: CartState = { items: [] };
 
 function sameLine(a: CartItem, b: CartItem) {
   return a.id === b.id && a.selectedSize === b.selectedSize && a.variantIndex === b.variantIndex;
 }
 
-function reducer(state: State, action: Action): State {
+function reducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case 'HYDRATE':
       return { items: action.payload };
@@ -82,15 +74,6 @@ function reducer(state: State, action: Action): State {
       return state;
   }
 }
-
-// Context type
-type CartContextType = {
-  items: CartItem[];
-  add: (product: Product, qty?: number, size?: string, variantIndex?: number) => void;
-  remove: (id: string, size?: string, variantIndex?: number) => void;
-  updateQty: (id: string, qty: number, size?: string, variantIndex?: number) => void;
-  clear: () => void;
-};
 
 // safer default
 const CartContext = createContext<CartContextType>({

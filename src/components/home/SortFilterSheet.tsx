@@ -1,36 +1,10 @@
 import React from "react";
+import type { SortFilterSheetProps } from "../../types";
+import { PRICE_BUCKETS } from "../../data/priceBuckets";
 import { View, StyleSheet, Pressable, Animated } from "react-native";
 import { Button, Checkbox, Divider, RadioButton, Text, Portal } from "react-native-paper";
 
-export type PriceKey = "p0" | "p1" | "p2" | "p3";
-export const PRICE_BUCKETS: { key: PriceKey; label: string; isIn: (price: number) => boolean }[] = [
-    { key: "p0", label: "Under ₹499", isIn: (p) => p < 499 },
-    { key: "p1", label: "₹500 – ₹999", isIn: (p) => p >= 500 && p <= 999 },
-    { key: "p2", label: "₹1000 – ₹1499", isIn: (p) => p >= 1000 && p <= 1499 },
-    { key: "p3", label: "₹1500+", isIn: (p) => p >= 1500 },
-];
-
-type Props = {
-    visible: boolean;
-    onClose: () => void;
-    tab: "sort" | "filter";
-    setTab: (t: "sort" | "filter") => void;
-
-    sortKey: "rel" | "plh" | "phl" | "name";
-    setSortKey: (k: "rel" | "plh" | "phl" | "name") => void;
-
-    onlyInStock: boolean;
-    setOnlyInStock: (v: boolean) => void;
-
-    selectedPriceKeys: PriceKey[];
-    setSelectedPriceKeys: React.Dispatch<React.SetStateAction<PriceKey[]>>;
-
-    allSizes: string[];
-    selectedSizes: string[];
-    setSelectedSizes: React.Dispatch<React.SetStateAction<string[]>>;
-};
-
-const SortFilterSheet: React.FC<Props> = ({
+const SortFilterSheet: React.FC<SortFilterSheetProps> = ({
     visible,
     onClose,
     tab,

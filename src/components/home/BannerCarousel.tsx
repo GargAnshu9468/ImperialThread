@@ -3,31 +3,11 @@ import { Animated, Dimensions, Image, Pressable, StyleSheet, View, ActivityIndic
 import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "react-native-paper";
 import { Asset } from "expo-asset";
+import { BANNERS } from "../../data/banners";
 
 const { width } = Dimensions.get("window");
 const CARD_W = width; 
 const CARD_H = Math.round(CARD_W * 0.45);
-
-const BANNERS = [
-  {
-    id: "b1",
-    image: require("../../../assets/img/products/product_2.jpeg"),
-    title: "Seasonal Picks",
-    sub: "Curated looks. Limited time.",
-  },
-  {
-    id: "b2",
-    image: require("../../../assets/img/banners/banner_2.avif"),
-    title: "Work. Weekend.",
-    sub: "Essentials for every day.",
-  },
-  {
-    id: "b3",
-    image: require("../../../assets/img/products/product_1.jpeg"),
-    title: "Premium Cotton",
-    sub: "Breezy. Durable. Soft.",
-  },
-];
 
 const BannerCarousel = ({ bannerX }: { bannerX: Animated.Value }) => {
 
